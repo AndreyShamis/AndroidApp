@@ -75,6 +75,23 @@ public class MainActivity extends Activity
 		}
 	}
 	
+    @Override
+    protected void onResume() {
+        // Ideally a game should implement onResume() and onPause()
+        // to take appropriate action when the activity looses focus
+        super.onResume();
+        coor.Start();
+
+    }
+
+    @Override
+    protected void onPause() {
+        // Ideally a game should implement onResume() and onPause()
+        // to take appropriate action when the activity looses focus
+        super.onPause();
+        coor.Stop();
+    }
+    
 	/**
 	 * ReadCPUinfo
 	 * @return
@@ -112,6 +129,14 @@ public class MainActivity extends Activity
 	    private float timestamp;
 	    private Sensor mRotationVectorSensor;
 	    
+	    public void Stop()
+	    {
+	    	mSensorManager.unregisterListener(this);
+	    }
+	    public void Start()
+	    {
+	    	mSensorManager.registerListener(this, mRotationVectorSensor,SensorManager.SENSOR_ORIENTATION);
+	    }
 	    public Coordinates()
 	    {
 			mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
