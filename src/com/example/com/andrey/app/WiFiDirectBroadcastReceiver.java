@@ -25,21 +25,16 @@ import android.net.wifi.p2p.WifiP2pManager.PeerListListener;
 @SuppressLint("NewApi")
 public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
 
-	public class P2PGroupOwner extends Thread
-	{
-		
-	}
+	public Boolean 			isGO 		= false;
+    private WifiP2pManager 	mManager;
+    private Channel 		mChannel;
+    private MainActivity 	mActivity;
+    WifiP2pDeviceList 		Ourpeers 	= new WifiP2pDeviceList();
+    WifiP2pDevice 			device 		= new WifiP2pDevice();
+	public WifiP2pConfig 	config 		= new WifiP2pConfig(); 
 	
-	public class P2PClient extends Thread
-	{
-		
-	}
-	public P2PClient m_Client;
-	public P2PGroupOwner m_Go;
-	public Boolean isGO = false;
     public class ConnInfoList implements ConnectionInfoListener
     {
-
 		@Override
 		public void onConnectionInfoAvailable(final WifiP2pInfo info) {
 	        // InetAddress from WifiP2pInfo struct.
@@ -51,33 +46,20 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
 	            // One common case is creating a server thread and accepting
 	            // incoming connections.
 	        	isGO = true;
-	        	
-	        	m_Go = new P2PGroupOwner();
-	        	
 	        } else if (info.groupFormed) {
 	        	AppendToText("The other device acts as the client. In this case,	 you'll want to create a client thread that connects to the group owner.");
 	            // The other device acts as the client. In this case,
 	            // you'll want to create a client thread that connects to the group
 	            // owner.
-	        	m_Client = new P2PClient();
 	        }
 	    }
-    }  
-	
-    private WifiP2pManager mManager;
-    private Channel mChannel;
-    private MainActivity mActivity;
-    WifiP2pDeviceList Ourpeers = new WifiP2pDeviceList();
-    WifiP2pDevice device = new WifiP2pDevice();
-    
-	public WifiP2pConfig config = new WifiP2pConfig();   
-    
+    }
+
 	public void SetDeviceMacAddress(String mac)
     {
     	config.deviceAddress = mac;
     }
-    
-    
+
     PeerListListener myPeerListListener = new PeerListListener() {
 		@Override
 		public void onPeersAvailable(WifiP2pDeviceList peers) {
@@ -86,7 +68,6 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
 		}
 	};
 
-	
     public WiFiDirectBroadcastReceiver(WifiP2pManager manager, Channel channel,
     		MainActivity activity) {
         super();
@@ -98,19 +79,15 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
 
     private void ConnectionChangedAction(Intent intent)
     {
-    	AppendToText("WIFI_P2P_CONNECTION_CHANGED_ACTION");  
-    	
         NetworkInfo networkInfo = (NetworkInfo) intent
                 .getParcelableExtra(WifiP2pManager.EXTRA_NETWORK_INFO);
 
         if (networkInfo.isConnected()) {
-            // We are connected with the other device, request connection
-            // info to find group owner IP
-        	AppendToText("We are connected"); 
+        	AppendToText("We are connected"); 		// We are connected with the other device, request connection
+	  												// info to find group owner IP
             ConnectionInfoListener connectionListener = new ConnInfoList();
 			mManager.requestConnectionInfo(mChannel, connectionListener );
         }
-
     }
 
 	@Override
@@ -150,10 +127,8 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
         if (state == WifiP2pManager.WIFI_P2P_STATE_ENABLED)
         {
         	AppendToText("Wifi P2P is enabled");
-            // Wifi P2P is enabled
         } else {
         	AppendToText("Wi-Fi P2P is not enabled");
-            // Wi-Fi P2P is not enabled
         }
 
     }

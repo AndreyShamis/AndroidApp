@@ -53,34 +53,9 @@ public class MainActivity extends Activity
 	    btnClear  		= (Button)  findViewById(R.id.btnClear);
 	    goIndicator 	= (Switch)	findViewById(R.id.goIndicator);
     }
-	@Override
-	protected void onCreate(Bundle savedInstanceState)
-	{
-		
-		super.onCreate(savedInstanceState);
-	    
-		try
-		{
-			mManager = (WifiP2pManager) getSystemService(Context.WIFI_P2P_SERVICE);
-		    mChannel = mManager.initialize(this, getMainLooper(), null);
-		    mReceiver = new WiFiDirectBroadcastReceiver(mManager, mChannel, this);
-		    mReceiver.SetDeviceMacAddress("CE:3A:61:B7:D7:B2".toLowerCase());
-		    
-		    mIntentFilter = new IntentFilter();
-		    mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION);
-		    mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION);
-		    mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION);
-		    mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION);
-		}
-		catch(Exception ex)
-		{
-			AppendToText("Error:" + ex.getMessage());
-		}
-
-
-		setContentView(R.layout.activity_main);
-		this.setGuiObjects();
-	    
+    
+    private void initGuiListeners()
+    {
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
             	text.setText(ReadCPUinfo());
@@ -98,10 +73,8 @@ public class MainActivity extends Activity
         });  
         btnP2pConnect.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-            	
             	try
             	{
-            		
             		WifiP2pDevice dev =mReceiver.getDeviceByMac("CE:3A:61:B7:D7:B2");
                 	mReceiver.config.deviceAddress = dev.deviceAddress;
                 	mReceiver.config.wps.setup = WpsInfo.PBC;
@@ -127,8 +100,6 @@ public class MainActivity extends Activity
             	{
             		AppendToText("Error: " + ex.getMessage());
             	}
-            	
-
             }
         });
         
@@ -147,10 +118,36 @@ public class MainActivity extends Activity
                 });
             }
         });
-        
-        
-
-
+    }
+    
+    private void initP2p()
+    {
+		try
+		{
+			mManager = (WifiP2pManager) getSystemService(Context.WIFI_P2P_SERVICE);
+		    mChannel = mManager.initialize(this, getMainLooper(), null);
+		    mReceiver = new WiFiDirectBroadcastReceiver(mManager, mChannel, this);
+		    mReceiver.SetDeviceMacAddress("CE:3A:61:B7:D7:B2".toLowerCase());
+		    
+		    mIntentFilter = new IntentFilter();
+		    mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION);
+		    mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION);
+		    mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION);
+		    mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION);
+		}
+		catch(Exception ex)
+		{
+			AppendToText("Error:" + ex.getMessage());
+		}
+    }
+	@Override
+	protected void onCreate(Bundle savedInstanceState)
+	{
+		super.onCreate(savedInstanceState);
+		this.initP2p();
+		setContentView(R.layout.activity_main);
+		this.initGuiListeners();
+		this.setGuiObjects();
 	}
 
     private void PrintToText(String string)
@@ -178,20 +175,20 @@ public class MainActivity extends Activity
 	{
 		try
 		{
-			text.setText("");
+			PrintToText("");
 	        ActivityManager servMng = (ActivityManager) getSystemService(ACTIVITY_SERVICE);
 	        List<ActivityManager.RunningAppProcessInfo> list = servMng.getRunningAppProcesses();
 	        if(list != null)
 	        {
 	        	for(int i=0;i<list.size();++i)
 	        	{
-	        		text.append(list.get(i).processName + " " + list.get(i).pid + "\n");
+	        		AppendToText(list.get(i).processName + " " + list.get(i).pid + "\n");
 	        	}
 	        }
 		}
 		catch(Exception ex)
 		{
-			text.setText("Error:" + ex.getMessage());
+			PrintToText("Error:" + ex.getMessage());
 		}
 	}
 	
