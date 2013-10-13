@@ -31,9 +31,8 @@ import android.widget.TextView;
 @SuppressLint("NewApi")
 public class MainActivity extends Activity
 {
-    Button button , btnP2pConnect,btnP2pDiscover , btnProcessList ,btnClear;
-    Switch goIndicator;
-    public TextView text;
+    Button button ,btnDisconnect , btnP2pConnect,btnP2pDiscover , btnProcessList ,btnClear;
+    public TextView text, txtGo, txtDevicesCount;
     Coordinates coor ;
     WifiP2pManager mManager;
     Channel mChannel;
@@ -41,29 +40,33 @@ public class MainActivity extends Activity
     IntentFilter mIntentFilter;
     Boolean enableOrientationPrint = false;
     PeerListListener myPeerListListener;
+    tools tls = new tools();
     
     private void setGuiObjects()
     {
 		coor 			= new Coordinates();
 	    button 			= (Button) findViewById(R.id.btnCpuInfo);
 	    btnProcessList 	= (Button) findViewById(R.id.btnShowProcessList);
+	    txtGo 			= (TextView) findViewById(R.id.txtGo);
 	    text 			= (TextView) findViewById(R.id.textView1);
+	    txtDevicesCount = (TextView) findViewById(R.id.txtDevicesCount);
 	    btnP2pConnect	= (Button)  findViewById(R.id.P2PConnect);
 	    btnP2pDiscover  = (Button)  findViewById(R.id.P2PDiscover);
 	    btnClear  		= (Button)  findViewById(R.id.btnClear);
-	    goIndicator 	= (Switch)	findViewById(R.id.goIndicator);
+	    btnDisconnect	= (Button)  findViewById(R.id.btnDisconnect);
     }
     
     private void initGuiListeners()
     {
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-            	text.setText(ReadCPUinfo());
+            	//
+            	text.setText(tls.ReadCPUinfo());
             }
         });
         btnProcessList.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-            	PrintProcessList();
+            	text.setText(tls.getProcessList((ActivityManager) getSystemService(ACTIVITY_SERVICE)));
             }
         });  
         btnClear.setOnClickListener(new View.OnClickListener() {
@@ -71,51 +74,20 @@ public class MainActivity extends Activity
             	text.setText("");
             }
         });  
+        btnDisconnect.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+            	mReceiver.APIP2pRemoveGroup();
+            }
+        });
         btnP2pConnect.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-            	try
-            	{
-            		WifiP2pDevice dev =mReceiver.getDeviceByMac("CE:3A:61:B7:D7:B2");
-                	mReceiver.config.deviceAddress = dev.deviceAddress;
-                	mReceiver.config.wps.setup = WpsInfo.PBC;
-                	AppendToText("Connecting to " + dev.deviceAddress);
-                	mManager.connect(mChannel, mReceiver.config, new ActionListener() {
-                	    @Override
-                	    public void onSuccess() {
-                	    	AppendToText("success logic btnP2pConnect");
-                	    }
-
-                	    @Override
-                	    public void onFailure(int reason) {
-                	    	AppendToText("failure logic. Reason int = " + reason);
-                	    }
-                	});
-                	
-            	}
-            	catch(NullPointerException nex)
-            	{
-            		AppendToText("Error: " + nex.getMessage());
-            	}
-            	catch(Exception ex)
-            	{
-            		AppendToText("Error: " + ex.getMessage());
-            	}
+            		mReceiver.APIP2PConnect("CE:3A:61:B7:D7:B2");
             }
         });
         
         btnP2pDiscover.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                mManager.discoverPeers(mChannel, new WifiP2pManager.ActionListener() {
-                    @Override
-                    public void onSuccess() {
-                    	AppendToText("success logic btnP2pDiscover");
-                    }
-
-                    @Override
-                    public void onFailure(int reasonCode) {
-                    	AppendToText("success logic btnP2pDiscover");
-                    }
-                });
+            	mReceiver.APIP2PDiscoverPeers();
             }
         });
     }
@@ -146,8 +118,9 @@ public class MainActivity extends Activity
 		super.onCreate(savedInstanceState);
 		this.initP2p();
 		setContentView(R.layout.activity_main);
-		this.initGuiListeners();
+		
 		this.setGuiObjects();
+		this.initGuiListeners();
 	}
 
     private void PrintToText(String string)
@@ -157,10 +130,8 @@ public class MainActivity extends Activity
     
     private void AppendToText(String string)
     {
-    	if(mReceiver.isGO)
-    	{
-    		goIndicator.setChecked(true);
-    	}
+    	txtDevicesCount.setText("Devices count: " + mReceiver.APIP2PgetDevicesCount());
+		txtGo.setText(mReceiver.getConnectionStatus());
     	text.append("\n" + string);
     }
     
@@ -171,26 +142,7 @@ public class MainActivity extends Activity
 		return true;
 	}
 	
-	private void PrintProcessList()
-	{
-		try
-		{
-			PrintToText("");
-	        ActivityManager servMng = (ActivityManager) getSystemService(ACTIVITY_SERVICE);
-	        List<ActivityManager.RunningAppProcessInfo> list = servMng.getRunningAppProcesses();
-	        if(list != null)
-	        {
-	        	for(int i=0;i<list.size();++i)
-	        	{
-	        		AppendToText(list.get(i).processName + " " + list.get(i).pid + "\n");
-	        	}
-	        }
-		}
-		catch(Exception ex)
-		{
-			PrintToText("Error:" + ex.getMessage());
-		}
-	}
+
 	
     @Override
     protected void onResume() {
@@ -213,32 +165,7 @@ public class MainActivity extends Activity
 
     }
     
-	/**
-	 * ReadCPUinfo
-	 * @return
-	 */
-	private String ReadCPUinfo()
-	{
-	  ProcessBuilder cmd;
-	  String result="";
-	
-	  try{
-	   String[] args = {"/system/bin/cat", "/proc/cpuinfo"};
-	   cmd = new ProcessBuilder(args);
-	
-	   Process process = cmd.start();
-	   InputStream in = process.getInputStream();
-	   byte[] re = new byte[1024];
-	   while(in.read(re) != -1){
-	    System.out.println(new String(re));
-	    result = result + new String(re);
-	   }
-	   in.close();
-	  } catch(IOException ex){
-	   ex.printStackTrace();
-	  }
-	  return result;
-	}
+
 	
 
 	class Coordinates implements SensorEventListener

@@ -9,6 +9,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.net.NetworkInfo;
+import android.net.wifi.WpsInfo;
 import android.net.wifi.p2p.WifiP2pConfig;
 import android.net.wifi.p2p.WifiP2pDevice;
 import android.net.wifi.p2p.WifiP2pDeviceList;
@@ -33,6 +34,8 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
     WifiP2pDevice 			device 		= new WifiP2pDevice();
 	public WifiP2pConfig 	config 		= new WifiP2pConfig(); 
 	
+	private String			connectStatus	=	"Not connected";
+	
     public class ConnInfoList implements ConnectionInfoListener
     {
 		@Override
@@ -46,15 +49,42 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
 	            // One common case is creating a server thread and accepting
 	            // incoming connections.
 	        	isGO = true;
+	        	connectStatus	=	"GO";
 	        } else if (info.groupFormed) {
-	        	AppendToText("The other device acts as the client. In this case,	 you'll want to create a client thread that connects to the group owner.");
+	        	AppendToText("Client. In this case,	 you'll want to create a client thread that connects to the group owner.");
 	            // The other device acts as the client. In this case,
 	            // you'll want to create a client thread that connects to the group
 	            // owner.
+	        	connectStatus	=	"Client";
 	        }
 	    }
     }
+    public class ActionListenerImpl implements ActionListener
+    {
+    	String actionType = "";
+    	
+    	public ActionListenerImpl(String newActionType )
+    	{
+    		this.actionType = newActionType;
+    	}
+		@Override
+		public void onFailure(int reason) {
+			AppendToText("Fail to " + actionType + ". Reason: " + reason); 
+			
+		}
 
+		@Override
+		public void onSuccess() {
+			AppendToText("Success to " + actionType); 
+			
+		}
+    	
+    }
+
+    public String getConnectionStatus()
+    {
+    	return connectStatus;
+    }
 	public void SetDeviceMacAddress(String mac)
     {
     	config.deviceAddress = mac;
@@ -68,6 +98,35 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
 		}
 	};
 
+	public void APIP2PConnect(String PeerMacAddress)
+	{
+		WifiP2pDevice dev 				= this.getDeviceByMac( PeerMacAddress);
+    	this.config.deviceAddress 		= dev.deviceAddress;
+    	this.config.wps.setup 			= WpsInfo.PBC;
+    	this.config.groupOwnerIntent 	= 15;
+    	AppendToText("Connecting to " + dev.deviceAddress);
+    	mManager.connect(mChannel, this.config, new ActionListenerImpl("connect"));
+	}
+	
+	public Integer APIP2PgetDevicesCount()
+	{
+		Integer ret = 0;
+		Collection<WifiP2pDevice> devs = Ourpeers.getDeviceList();
+		ret = devs.size();
+		return ret;
+	}
+	public void APIDisconnect()
+	{
+        if (mManager != null) {
+            mManager.cancelConnect(mChannel, new ActionListenerImpl("cancelConnect"));
+        }
+	}
+	
+	public void APIP2PDiscoverPeers()
+	{
+        mManager.discoverPeers(mChannel,new ActionListenerImpl("discoverPeers"));
+	}
+	
     public WiFiDirectBroadcastReceiver(WifiP2pManager manager, Channel channel,
     		MainActivity activity) {
         super();
@@ -88,8 +147,16 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
             ConnectionInfoListener connectionListener = new ConnInfoList();
 			mManager.requestConnectionInfo(mChannel, connectionListener );
         }
+        else
+        {
+        	connectStatus = "Not connected";
+        }
     }
 
+    public void APIP2pRemoveGroup()
+    {
+		mManager.removeGroup(mChannel,  new ActionListenerImpl("removeGroup"));
+    }
 	@Override
     public void onReceive(Context context, Intent intent) {
         String action = intent.getAction();
