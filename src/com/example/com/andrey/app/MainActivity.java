@@ -19,6 +19,7 @@ import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
 import android.content.IntentFilter;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -167,6 +168,7 @@ public class MainActivity extends Activity
 	public void CloseApp()
 	{
 		this.finish();
+	    System.exit(0);
 	}
 	
     private void PrintToText(String string)
