@@ -93,8 +93,8 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
     PeerListListener myPeerListListener = new PeerListListener() {
 		@Override
 		public void onPeersAvailable(WifiP2pDeviceList peers) {
-			// TODO Auto-generated method stub
-			printPeers(peers);
+			Ourpeers = peers;
+			//printPeers(peers);
 		}
 	};
 
@@ -199,13 +199,19 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
         }
 
     }
-	public void printPeers(WifiP2pDeviceList peers)
+	private void printPeers(WifiP2pDeviceList peers)
 	{
 		Collection<WifiP2pDevice> devs = peers.getDeviceList();
 		for (WifiP2pDevice dev : devs){
 			AppendToText(dev.deviceName +  " " + dev.deviceAddress);
 		}
-		Ourpeers = peers;
+		//Ourpeers = peers;
+	}
+	
+	public Collection<WifiP2pDevice> getP2PDevices()
+	{
+		Collection<WifiP2pDevice> devs = Ourpeers.getDeviceList();
+		return devs;
 	}
 	
 	public WifiP2pDevice getDeviceByMac(String mac)

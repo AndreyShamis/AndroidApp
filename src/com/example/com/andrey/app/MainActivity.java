@@ -2,6 +2,8 @@ package com.example.com.andrey.app;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import android.R.bool;
@@ -24,15 +26,19 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.view.Menu;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.Switch;
+import android.widget.TableLayout;
+import android.widget.TableRow;
 import android.widget.TextView;
 
 @SuppressLint("NewApi")
 public class MainActivity extends Activity
 {
-    Button button ,btnDisconnect , btnP2pConnect,btnP2pDiscover , btnProcessList ,btnClear;
-    public TextView text, txtGo, txtDevicesCount;
+    Button button ,btnDisconnect , btnP2pConnect,btnP2pDiscover , btnProcessList ,btnClear,btnPreintP2pDevices;
+    public TextView text, txtGo, txtDevicesCount,txtDiscoverStatus;
+    TableLayout tblDevices;
     Coordinates coor ;
     WifiP2pManager mManager;
     Channel mChannel;
@@ -50,10 +56,13 @@ public class MainActivity extends Activity
 	    txtGo 			= (TextView) findViewById(R.id.txtGo);
 	    text 			= (TextView) findViewById(R.id.textView1);
 	    txtDevicesCount = (TextView) findViewById(R.id.txtDevicesCount);
+	    txtDiscoverStatus = (TextView) findViewById(R.id.txtDiscoverStatus);
 	    btnP2pConnect	= (Button)  findViewById(R.id.P2PConnect);
 	    btnP2pDiscover  = (Button)  findViewById(R.id.P2PDiscover);
 	    btnClear  		= (Button)  findViewById(R.id.btnClear);
 	    btnDisconnect	= (Button)  findViewById(R.id.btnDisconnect);
+	    btnPreintP2pDevices = (Button)  findViewById(R.id.btnPreintP2pDevices);
+	    tblDevices 		= (TableLayout) findViewById(R.id.tblDevices);
     }
     
     private void initGuiListeners()
@@ -69,6 +78,29 @@ public class MainActivity extends Activity
             	text.setText(tls.getProcessList((ActivityManager) getSystemService(ACTIVITY_SERVICE)));
             }
         });  
+        
+        btnPreintP2pDevices.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+            	tblDevices.removeAllViews();
+        		Collection<WifiP2pDevice> devs = mReceiver.getP2PDevices();
+        		for (WifiP2pDevice dev : devs){
+        			TableRow tr = new TableRow(getBaseContext());
+        			TextView dev_addr = new TextView(getBaseContext());
+        			TextView dev_name = new TextView(getBaseContext());
+
+        			//AppendToText(dev.deviceAddress + " " + dev.deviceName +  " ");
+        			dev_addr.setText(dev.deviceAddress);
+        			dev_addr.setWidth(300);
+        			dev_addr.setOnClickListener( new ConnectToPeerByMax());
+        			dev_name.setPadding(20, 0, 0, 0);
+        			dev_name.setText(dev.deviceName);
+        			tr.addView(dev_addr);
+        			tr.addView(dev_name);
+        			tblDevices.addView(tr);
+        		}
+            }
+        }); 
+        
         btnClear.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
             	text.setText("");
@@ -81,7 +113,7 @@ public class MainActivity extends Activity
         });
         btnP2pConnect.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-            		mReceiver.APIP2PConnect("CE:3A:61:B7:D7:B2");
+            		mReceiver.APIP2PConnect("0c:8b:fd:5f:13:89");// "CE:3A:61:B7:D7:B2");
             }
         });
         
@@ -121,6 +153,8 @@ public class MainActivity extends Activity
 		
 		this.setGuiObjects();
 		this.initGuiListeners();
+		txtDiscoverStatus.setText(tls.getMACAddress("wlan0"));
+
 	}
 
     private void PrintToText(String string)
@@ -166,7 +200,16 @@ public class MainActivity extends Activity
     }
     
 
-	
+	class ConnectToPeerByMax implements OnClickListener
+	{
+
+		@Override
+		public void onClick(View v) {
+			TextView txt = (TextView)v;
+			mReceiver.APIP2PConnect((String) txt.getText());
+		}
+		
+	}
 
 	class Coordinates implements SensorEventListener
 	{

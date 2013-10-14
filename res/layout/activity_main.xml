@@ -29,6 +29,12 @@
 		        android:minWidth="@dimen/activity_horizontal_margin"
 		        android:text="Clear"
 		        android:textSize="8sp" />
+		    <Button
+		        android:id="@+id/btnNew1"
+		        android:minHeight="@dimen/activity_horizontal_margin"
+		        android:minWidth="@dimen/activity_horizontal_margin"
+		        android:text="NONE"
+		        android:textSize="8sp" />
 
     </TableRow> 
     <TableRow  
@@ -52,6 +58,12 @@
 		        android:minHeight="@dimen/activity_horizontal_margin"
 		        android:minWidth="@dimen/activity_horizontal_margin"
 		        android:text="Disconnect"
+		        android:textSize="8sp" />
+		    <Button
+		        android:id="@+id/btnPreintP2pDevices"
+		        android:minHeight="@dimen/activity_horizontal_margin"
+		        android:minWidth="@dimen/activity_horizontal_margin"
+		        android:text="P2P Peers"
 		        android:textSize="8sp" />
     </TableRow>
     <TableRow
@@ -84,19 +96,63 @@
            	    android:background="#AC7703"
            	    android:scrollbarAlwaysDrawVerticalTrack="true"
            	    android:text="Devices count:0" />
-
+         	<TextView
+           	    android:id="@+id/txtNew1"
+           	    android:layout_width="wrap_content"
+           	    android:layout_height="wrap_content"
+           	    android:scrollHorizontally="true"
+           	    android:background="#BC7703"
+           	    android:scrollbarAlwaysDrawVerticalTrack="true"
+           	    android:text="NONE" />
     </TableRow>
+    
+      <TableRow
+        android:id="@+id/tableRow14"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="#BC7703"
+        android:gravity="center_horizontal">
+
+          <ScrollView
+              android:id="@+id/scrollView2"
+              android:layout_span="4"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content" >
+
+              <LinearLayout
+                  android:layout_width="match_parent"
+                  android:layout_height="match_parent"
+                  android:orientation="vertical" >
+
+                  <TableLayout
+                      android:id="@+id/tblDevices"
+                      android:layout_width="match_parent"
+                      android:layout_height="wrap_content" >
+
+                      <TableRow
+                          android:id="@+id/tableRow5"
+                          android:layout_width="wrap_content"
+                          android:background="#BC7703"
+                          android:layout_height="wrap_content" >
+                      </TableRow>
+
+                  </TableLayout>
+                  
+              </LinearLayout>
+          </ScrollView>
+
+    </TableRow> 
     <TableRow
         android:id="@+id/tableRow4"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        
         android:gravity="center_horizontal">
        		<ScrollView
 	            android:id="@+id/scrollView1"
 	            android:layout_width="wrap_content"
-	            android:layout_span="3"
+	            android:layout_span="4"
 	            android:layout_height="wrap_content" >
 	           	<TextView
 			        android:id="@+id/textView1"
@@ -104,9 +160,7 @@
 			        android:layout_height="wrap_content"
 			        android:scrollHorizontally="true"
 			        android:scrollbars = "vertical"
-			        android:text="@string/hello_world" 
-			        android:layout_span="3"/>
+			        android:text="@string/hello_world"/>
            	</ScrollView>
-    </TableRow>
-
+ 	</TableRow>
     </TableLayout>
