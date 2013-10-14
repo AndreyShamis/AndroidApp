@@ -26,18 +26,33 @@ import android.net.wifi.p2p.WifiP2pManager.PeerListListener;
 @SuppressLint("NewApi")
 public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
 
-	public Boolean 			isGO 		= false;
-    private WifiP2pManager 	mManager;
-    private Channel 		mChannel;
-    private MainActivity 	mActivity;
-    WifiP2pDeviceList 		Ourpeers 	= new WifiP2pDeviceList();
-    WifiP2pDevice 			device 		= new WifiP2pDevice();
-	public WifiP2pConfig 	config 		= new WifiP2pConfig(); 
-	
-	private String			connectStatus	=	"Not connected";
-	
-    public class ConnInfoList implements ConnectionInfoListener
-    {
+    private WifiP2pManager 			mManager;
+    private Channel 				mChannel;
+    private MainActivity 			mActivity;
+    private WifiP2pDeviceList 		Ourpeers 		= new WifiP2pDeviceList();
+    private WifiP2pConfig 			config 			= new WifiP2pConfig(); 
+	private NetworkInfo 			netInfo;
+	private String					connectStatus	=	"Not connected";
+	private PeerListListener 		myPeerListListener = new PeerListListener() {
+		@Override
+		public void onPeersAvailable(WifiP2pDeviceList peers) {
+			Ourpeers = peers;
+		}
+	};
+		
+    public WiFiDirectBroadcastReceiver(WifiP2pManager manager, Channel channel,MainActivity activity) {
+        super();
+        this.mManager = manager;
+        this.mChannel = channel;
+        this.mActivity = activity;        
+    }
+    
+    /**
+     * Implementation of ConnectionInfoListener
+     * @author Andrey Shamis
+     */
+    public class ConnInfoList implements ConnectionInfoListener{
+    	
 		@Override
 		public void onConnectionInfoAvailable(final WifiP2pInfo info) {
 	        // InetAddress from WifiP2pInfo struct.
@@ -48,7 +63,6 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
 	            // Do whatever tasks are specific to the group owner.
 	            // One common case is creating a server thread and accepting
 	            // incoming connections.
-	        	isGO = true;
 	        	connectStatus	=	"GO";
 	        } else if (info.groupFormed) {
 	        	AppendToText("Client. In this case,	 you'll want to create a client thread that connects to the group owner.");
@@ -57,49 +71,42 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
 	            // owner.
 	        	connectStatus	=	"Client";
 	        }
+	        AppendToText("");
 	    }
     }
-    public class ActionListenerImpl implements ActionListener
-    {
+    
+    /**
+     * Implementation of ActionListener
+     * @author Andrey Shamis
+     */
+    public class ActionListenerImpl implements ActionListener{
+    	
     	String actionType = "";
     	
-    	public ActionListenerImpl(String newActionType )
-    	{
+    	public ActionListenerImpl(String newActionType ){
     		this.actionType = newActionType;
     	}
+    	
 		@Override
 		public void onFailure(int reason) {
 			AppendToText("Fail to " + actionType + ". Reason: " + reason); 
-			
 		}
-
+		
 		@Override
 		public void onSuccess() {
 			AppendToText("Success to " + actionType); 
-			
 		}
-    	
     }
-
-    public String getConnectionStatus()
-    {
+    
+    public String getConnectionStatus(){
     	return connectStatus;
     }
-	public void SetDeviceMacAddress(String mac)
-    {
+    
+	public void SetDeviceMacAddress(String mac){
     	config.deviceAddress = mac;
     }
 
-    PeerListListener myPeerListListener = new PeerListListener() {
-		@Override
-		public void onPeersAvailable(WifiP2pDeviceList peers) {
-			Ourpeers = peers;
-			//printPeers(peers);
-		}
-	};
-
-	public void APIP2PConnect(String PeerMacAddress)
-	{
+	public void APIP2PConnect(String PeerMacAddress){
 		WifiP2pDevice dev 				= this.getDeviceByMac( PeerMacAddress);
     	this.config.deviceAddress 		= dev.deviceAddress;
     	this.config.wps.setup 			= WpsInfo.PBC;
@@ -108,122 +115,99 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
     	mManager.connect(mChannel, this.config, new ActionListenerImpl("connect"));
 	}
 	
-	public Integer APIP2PgetDevicesCount()
-	{
+	public Integer APIP2PgetDevicesCount(){
 		Integer ret = 0;
 		Collection<WifiP2pDevice> devs = Ourpeers.getDeviceList();
 		ret = devs.size();
 		return ret;
 	}
-	public void APIDisconnect()
-	{
+	
+	public void APIDisconnect(){
         if (mManager != null) {
             mManager.cancelConnect(mChannel, new ActionListenerImpl("cancelConnect"));
         }
 	}
 	
-	public void APIP2PDiscoverPeers()
-	{
+	public void APIP2PDiscoverPeers(){
         mManager.discoverPeers(mChannel,new ActionListenerImpl("discoverPeers"));
 	}
-	
-    public WiFiDirectBroadcastReceiver(WifiP2pManager manager, Channel channel,
-    		MainActivity activity) {
-        super();
-        this.mManager = manager;
-        this.mChannel = channel;
-        this.mActivity = activity;
-        
-    }
 
     private void ConnectionChangedAction(Intent intent)
     {
-        NetworkInfo networkInfo = (NetworkInfo) intent
-                .getParcelableExtra(WifiP2pManager.EXTRA_NETWORK_INFO);
+    	netInfo = (NetworkInfo)intent.getParcelableExtra(WifiP2pManager.EXTRA_NETWORK_INFO);
 
-        if (networkInfo.isConnected()) {
+        if (netInfo.isConnected()) {
         	AppendToText("We are connected"); 		// We are connected with the other device, request connection
 	  												// info to find group owner IP
             ConnectionInfoListener connectionListener = new ConnInfoList();
 			mManager.requestConnectionInfo(mChannel, connectionListener );
-        }
-        else
-        {
+			connectStatus = "Connecting";
+        }else{
         	connectStatus = "Not connected";
         }
+        AppendToText("NI State:" + netInfo.getState().toString());
     }
 
-    public void APIP2pRemoveGroup()
-    {
+    public void APIP2pRemoveGroup(){
 		mManager.removeGroup(mChannel,  new ActionListenerImpl("removeGroup"));
     }
+    
 	@Override
     public void onReceive(Context context, Intent intent) {
         String action = intent.getAction();
 
-        if (WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION.equals(action))
-        {
+        if (WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION.equals(action)){
         	this.P2PStateChanged(intent);
-            // Check to see if Wi-Fi is enabled and notify appropriate activity
-        } else if (WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION.equals(action))
-        {
+        } else if (WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION.equals(action)){
         	this.RequestPeers(intent);
-            // Call WifiP2pManager.requestPeers() to get a list of current peers
-        } else if (WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION.equals(action))
-        {
-        	this.ConnectionChangedAction(intent);
-            // Respond to new connection or disconnections
+        } else if (WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION.equals(action)){
+        	this.ConnectionChangedAction(intent);	// Respond to new connection or disconnections
         } else if (WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION.equals(action))
         {
-        	AppendToText("WIFI_P2P_THIS_DEVICE_CHANGED_ACTION"); 
+        	AppendToText("WIFI_P2P_THIS_DEVICE_CHANGED_ACTION");
+            //DeviceListFragment fragment = (DeviceListFragment) mActivity.getFragmentManager()
+            //        .findFragmentById(R.id.frag_list);
+            //fragment.updateThisDevice((WifiP2pDevice) intent.getParcelableExtra(
+            //        WifiP2pManager.EXTRA_WIFI_P2P_DEVICE));
+
             // Respond to this device's wifi state changing
         }
     }
 
-    private void RequestPeers( Intent intent)
-    {
+    private void RequestPeers( Intent intent){
         if (mManager != null) {
             mManager.requestPeers(mChannel, myPeerListListener);
             AppendToText("WIFI_P2P_PEERS_CHANGED_ACTION");  
         }
     }
     
-    private void P2PStateChanged(Intent intent)
-    {
+    private void P2PStateChanged(Intent intent){
         int state = intent.getIntExtra(WifiP2pManager.EXTRA_WIFI_STATE, -1);
-        if (state == WifiP2pManager.WIFI_P2P_STATE_ENABLED)
-        {
+        if (state == WifiP2pManager.WIFI_P2P_STATE_ENABLED){
         	AppendToText("Wifi P2P is enabled");
         } else {
         	AppendToText("Wi-Fi P2P is not enabled");
         }
-
     }
-	private void printPeers(WifiP2pDeviceList peers)
-	{
+    
+	private void printPeers(WifiP2pDeviceList peers){
 		Collection<WifiP2pDevice> devs = peers.getDeviceList();
 		for (WifiP2pDevice dev : devs){
 			AppendToText(dev.deviceName +  " " + dev.deviceAddress);
 		}
-		//Ourpeers = peers;
 	}
 	
-	public Collection<WifiP2pDevice> getP2PDevices()
-	{
-		Collection<WifiP2pDevice> devs = Ourpeers.getDeviceList();
-		return devs;
+	public Collection<WifiP2pDevice> getP2PDevices(){
+		return Ourpeers.getDeviceList();
 	}
 	
 	public WifiP2pDevice getDeviceByMac(String mac)
 	{
 		WifiP2pDevice ret = new WifiP2pDevice();
-		try
-		{
+		try{
 			Collection<WifiP2pDevice> devs = Ourpeers.getDeviceList();
-			for (WifiP2pDevice dev : devs)
-			{
-				if( dev.deviceAddress.trim().equalsIgnoreCase(mac.trim()))
-				{
+			for (WifiP2pDevice dev : devs){
+				if( dev.deviceAddress.trim().equalsIgnoreCase(mac.trim())){
 					ret = dev;
 					break;
 				}
@@ -233,13 +217,13 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
 		return ret;
 	}
 
-    private void PrintToText(String string)
-    {
+    private void PrintToText(String string){
     	this.mActivity.text.setText(string);
     }
-    
-    private void AppendToText(String string)
-    {
+
+    private void AppendToText(String string){
+    	this.mActivity.txtGo.setText(getConnectionStatus());
     	this.mActivity.text.append("\n" + string);
     }
+    
 }

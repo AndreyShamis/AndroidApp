@@ -36,7 +36,8 @@ import android.widget.TextView;
 @SuppressLint("NewApi")
 public class MainActivity extends Activity
 {
-    Button button ,btnDisconnect , btnP2pConnect,btnP2pDiscover , btnProcessList ,btnClear,btnPreintP2pDevices;
+    Button button ,btnDisconnect , btnP2pConnect,btnP2pDiscover, btnExit,
+    	btnProcessList ,btnClear,btnPreintP2pDevices;
     public TextView text, txtGo, txtDevicesCount,txtDiscoverStatus;
     TableLayout tblDevices;
     Coordinates coor ;
@@ -63,6 +64,7 @@ public class MainActivity extends Activity
 	    btnDisconnect	= (Button)  findViewById(R.id.btnDisconnect);
 	    btnPreintP2pDevices = (Button)  findViewById(R.id.btnPreintP2pDevices);
 	    tblDevices 		= (TableLayout) findViewById(R.id.tblDevices);
+	    btnExit			= (Button)  findViewById(R.id.btnExit);
     }
     
     private void initGuiListeners()
@@ -71,6 +73,11 @@ public class MainActivity extends Activity
             public void onClick(View v) {
             	//
             	text.setText(tls.ReadCPUinfo());
+            }
+        });
+        btnExit.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+            	CloseApp();
             }
         });
         btnProcessList.setOnClickListener(new View.OnClickListener() {
@@ -153,10 +160,15 @@ public class MainActivity extends Activity
 		
 		this.setGuiObjects();
 		this.initGuiListeners();
-		txtDiscoverStatus.setText(tls.getMACAddress("wlan0"));
+		txtDiscoverStatus.setText(tls.getMACAddress("p2p0"));
 
 	}
 
+	public void CloseApp()
+	{
+		this.finish();
+	}
+	
     private void PrintToText(String string)
     {
     	text.setText(string);

@@ -9,6 +9,7 @@
  
 	    <TableRow
 	        android:id="@+id/tableRow1"
+	        android:background="#99FFCC"
 	        android:layout_width="match_parent"
 	        android:layout_height="wrap_content" >
              <Button
@@ -16,55 +17,77 @@
 		        android:minHeight="@dimen/activity_horizontal_margin"
 		        android:minWidth="@dimen/activity_horizontal_margin"
 		        android:text="CPU Info"
-		        android:textSize="8sp" />
+		        android:textSize="12sp" />
 		    <Button
 		        android:id="@+id/btnShowProcessList"
 		        android:minHeight="@dimen/activity_horizontal_margin"
 		        android:minWidth="@dimen/activity_horizontal_margin"
 		        android:text="Process List"
-		        android:textSize="8sp" />
+		        android:textSize="12sp" />
 		    <Button
 		        android:id="@+id/btnClear"
 		        android:minHeight="@dimen/activity_horizontal_margin"
 		        android:minWidth="@dimen/activity_horizontal_margin"
 		        android:text="Clear"
-		        android:textSize="8sp" />
+		        android:textSize="12sp" />
 		    <Button
-		        android:id="@+id/btnNew1"
+		        android:id="@+id/btnExit"
 		        android:minHeight="@dimen/activity_horizontal_margin"
 		        android:minWidth="@dimen/activity_horizontal_margin"
-		        android:text="NONE"
-		        android:textSize="8sp" />
-
+		        android:text="@string/close_app"
+		        android:textSize="12sp" />
     </TableRow> 
+    <TableRow
+        android:id="@+id/tblP2P"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="#00FFFF"
+        android:gravity="center_horizontal">
+       		<ScrollView
+	            android:id="@+id/scrP2P"
+	            android:layout_width="wrap_content"
+	            android:layout_span="4"
+	            android:layout_height="wrap_content" >
+	           	<TextView
+			        android:id="@+id/txtP2P"
+			        android:layout_width="wrap_content"
+			        android:layout_height="wrap_content"
+			        android:scrollHorizontally="true"
+			        android:scrollbars = "vertical"
+			        android:textSize="12sp"
+			        android:text="P2P"/>
+           	</ScrollView>
+ 	</TableRow>
     <TableRow  
         android:id="@+id/tableRow2"  
         android:layout_height="wrap_content"  
+        android:background="#00FFFF"
         android:layout_width="wrap_content"> 
 		    <Button
 		        android:id="@+id/P2PConnect"
 		        android:minHeight="@dimen/activity_horizontal_margin"
 		        android:minWidth="@dimen/activity_horizontal_margin"
-		        android:text="P2P Connect"
-		        android:textSize="8sp" />
+		        android:text="@string/p2p_connect"
+		        android:textSize="12sp" />
 		    <Button
 		        android:id="@+id/P2PDiscover"
 		        android:minHeight="@dimen/activity_horizontal_margin"
 		        android:minWidth="@dimen/activity_horizontal_margin"
-		        android:text="P2P Discover"
-		        android:textSize="8sp" />
+		        android:text="@string/p2p_discover"
+		        android:textSize="12sp" />
 		    <Button
 		        android:id="@+id/btnDisconnect"
 		        android:minHeight="@dimen/activity_horizontal_margin"
 		        android:minWidth="@dimen/activity_horizontal_margin"
-		        android:text="Disconnect"
-		        android:textSize="8sp" />
+		        android:text="@string/p2p_disconnect"
+		        android:textSize="12sp" />
 		    <Button
 		        android:id="@+id/btnPreintP2pDevices"
 		        android:minHeight="@dimen/activity_horizontal_margin"
 		        android:minWidth="@dimen/activity_horizontal_margin"
-		        android:text="P2P Peers"
-		        android:textSize="8sp" />
+		        android:text="@string/p2p_peers"
+		        android:textSize="12sp" />
     </TableRow>
     <TableRow
         android:id="@+id/tableRow3"

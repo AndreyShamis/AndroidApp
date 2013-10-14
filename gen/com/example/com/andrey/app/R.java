@@ -24,30 +24,33 @@ public final class R {
         public static final int ic_launcher=0x7f020000;
     }
     public static final class id {
-        public static final int P2PConnect=0x7f080007;
-        public static final int P2PDiscover=0x7f080008;
-        public static final int action_settings=0x7f080017;
+        public static final int P2PConnect=0x7f08000a;
+        public static final int P2PDiscover=0x7f08000b;
+        public static final int action_settings=0x7f08001a;
         public static final int btnClear=0x7f080004;
         public static final int btnCpuInfo=0x7f080002;
-        public static final int btnDisconnect=0x7f080009;
-        public static final int btnNew1=0x7f080005;
-        public static final int btnPreintP2pDevices=0x7f08000a;
+        public static final int btnDisconnect=0x7f08000c;
+        public static final int btnExit=0x7f080005;
+        public static final int btnPreintP2pDevices=0x7f08000d;
         public static final int btnShowProcessList=0x7f080003;
-        public static final int scrollView1=0x7f080015;
-        public static final int scrollView2=0x7f080011;
+        public static final int scrP2P=0x7f080007;
+        public static final int scrollView1=0x7f080018;
+        public static final int scrollView2=0x7f080014;
         public static final int tableLayout1=0x7f080000;
         public static final int tableRow1=0x7f080001;
-        public static final int tableRow14=0x7f080010;
-        public static final int tableRow2=0x7f080006;
-        public static final int tableRow3=0x7f08000b;
-        public static final int tableRow4=0x7f080014;
-        public static final int tableRow5=0x7f080013;
-        public static final int tblDevices=0x7f080012;
-        public static final int textView1=0x7f080016;
-        public static final int txtDevicesCount=0x7f08000e;
-        public static final int txtDiscoverStatus=0x7f08000d;
-        public static final int txtGo=0x7f08000c;
-        public static final int txtNew1=0x7f08000f;
+        public static final int tableRow14=0x7f080013;
+        public static final int tableRow2=0x7f080009;
+        public static final int tableRow3=0x7f08000e;
+        public static final int tableRow4=0x7f080017;
+        public static final int tableRow5=0x7f080016;
+        public static final int tblDevices=0x7f080015;
+        public static final int tblP2P=0x7f080006;
+        public static final int textView1=0x7f080019;
+        public static final int txtDevicesCount=0x7f080011;
+        public static final int txtDiscoverStatus=0x7f080010;
+        public static final int txtGo=0x7f08000f;
+        public static final int txtNew1=0x7f080012;
+        public static final int txtP2P=0x7f080008;
     }
     public static final class layout {
         public static final int activity_main=0x7f030000;
@@ -58,7 +61,12 @@ public final class R {
     public static final class string {
         public static final int action_settings=0x7f050001;
         public static final int app_name=0x7f050000;
+        public static final int close_app=0x7f050003;
         public static final int hello_world=0x7f050002;
+        public static final int p2p_connect=0x7f050004;
+        public static final int p2p_disconnect=0x7f050006;
+        public static final int p2p_discover=0x7f050005;
+        public static final int p2p_peers=0x7f050007;
     }
     public static final class style {
         /** 
