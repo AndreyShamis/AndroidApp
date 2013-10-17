@@ -117,7 +117,6 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
 		if(dev != null){
 	    	this.config.deviceAddress 		= dev.deviceAddress;
 	    	this.config.wps.setup 			= WpsInfo.PBC;
-	    	
 	    	this.config.groupOwnerIntent 	= 0;
 	    	AppendToText("Connecting to " + dev.deviceAddress);
 	    	mManager.connect(mChannel, this.config, new ActionListenerImpl("connect"));

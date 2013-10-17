@@ -106,7 +106,7 @@ public class MainActivity extends Activity
 
         			//AppendToText(dev.deviceAddress + " " + dev.deviceName +  " ");
         			dev_addr.setText(dev.deviceAddress);
-        			dev_addr.setTextSize(TypedValue.COMPLEX_UNIT_SP, 22);
+        			dev_addr.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18);
         			dev_addr.setWidth(380);
         			dev_addr.setOnClickListener( new ConnectToPeerByMax());
         			
