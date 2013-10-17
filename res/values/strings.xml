@@ -3,7 +3,7 @@
 
     <string name="app_name">P2P</string>
     <string name="action_settings">Settings</string>
-    <string name="hello_world">Hello world!</string>
+    <string name="hello_world">#### Application started ####</string>
 	<string name="close_app">Exit</string>
 	
 	<string name="p2p_connect">Connect</string>

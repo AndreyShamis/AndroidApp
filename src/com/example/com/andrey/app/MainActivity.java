@@ -5,6 +5,8 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import android.R.bool;
 import android.net.wifi.WpsInfo;
@@ -12,8 +14,10 @@ import android.net.wifi.p2p.WifiP2pDevice;
 import android.net.wifi.p2p.WifiP2pManager;
 import android.net.wifi.p2p.WifiP2pManager.ActionListener;
 import android.net.wifi.p2p.WifiP2pManager.Channel;
+import android.net.wifi.p2p.WifiP2pManager.ChannelListener;
 import android.net.wifi.p2p.WifiP2pManager.PeerListListener;
 import android.os.Bundle;
+import android.os.Handler;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ActivityManager;
@@ -25,6 +29,7 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.util.TypedValue;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -49,6 +54,7 @@ public class MainActivity extends Activity
     Boolean enableOrientationPrint = false;
     PeerListListener myPeerListListener;
     tools tls = new tools();
+
     
     private void setGuiObjects()
     {
@@ -70,6 +76,8 @@ public class MainActivity extends Activity
     
     private void initGuiListeners()
     {
+    	
+    	
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
             	//
@@ -98,14 +106,19 @@ public class MainActivity extends Activity
 
         			//AppendToText(dev.deviceAddress + " " + dev.deviceName +  " ");
         			dev_addr.setText(dev.deviceAddress);
-        			dev_addr.setWidth(300);
+        			dev_addr.setTextSize(TypedValue.COMPLEX_UNIT_SP, 22);
+        			dev_addr.setWidth(380);
         			dev_addr.setOnClickListener( new ConnectToPeerByMax());
+        			
         			dev_name.setPadding(20, 0, 0, 0);
         			dev_name.setText(dev.deviceName);
+        			dev_name.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18);
+        			dev_name.setTextIsSelectable(true);
         			tr.addView(dev_addr);
         			tr.addView(dev_name);
         			tblDevices.addView(tr);
         		}
+        		
             }
         }); 
         
@@ -137,10 +150,14 @@ public class MainActivity extends Activity
 		try
 		{
 			mManager = (WifiP2pManager) getSystemService(Context.WIFI_P2P_SERVICE);
-		    mChannel = mManager.initialize(this, getMainLooper(), null);
+		    mChannel = mManager.initialize(this, getMainLooper(), new ChannelListener() {
+				
+				public void onChannelDisconnected() {
+					AppendToText("On Channel Disconnected");
+				}
+			});
 		    mReceiver = new WiFiDirectBroadcastReceiver(mManager, mChannel, this);
 		    mReceiver.SetDeviceMacAddress("CE:3A:61:B7:D7:B2".toLowerCase());
-		    
 		    mIntentFilter = new IntentFilter();
 		    mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION);
 		    mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION);
@@ -162,7 +179,21 @@ public class MainActivity extends Activity
 		this.setGuiObjects();
 		this.initGuiListeners();
 		txtDiscoverStatus.setText(tls.getMACAddress("p2p0"));
+		
+	    final Handler handler = new Handler();
+	    Timer timer = new Timer();
 
+	    timer.scheduleAtFixedRate(new TimerTask() {
+	        @Override
+	        public void run() {
+	            handler.post(new Runnable() {
+	                public void run() {
+	                	txtGo.setText(mReceiver.getConnectionStatus());
+	                	txtDevicesCount.setText("Devices count: " + mReceiver.APIP2PgetDevicesCount());
+	                }
+	            });
+	        }
+	    },100,100);
 	}
 
 	public void CloseApp()
@@ -176,10 +207,8 @@ public class MainActivity extends Activity
     	text.setText(string);
     }
     
-    private void AppendToText(String string)
+    public void AppendToText(String string)
     {
-    	txtDevicesCount.setText("Devices count: " + mReceiver.APIP2PgetDevicesCount());
-		txtGo.setText(mReceiver.getConnectionStatus());
     	text.append("\n" + string);
     }
     
@@ -189,9 +218,7 @@ public class MainActivity extends Activity
 		getMenuInflater().inflate(R.menu.main, menu);
 		return true;
 	}
-	
 
-	
     @Override
     protected void onResume() {
         // Ideally a game should implement onResume() and onPause()
@@ -209,6 +236,7 @@ public class MainActivity extends Activity
         // to take appropriate action when the activity looses focus
         super.onPause();
         coor.Stop();
+        mReceiver.clearLocalServices();
         unregisterReceiver(mReceiver);
 
     }

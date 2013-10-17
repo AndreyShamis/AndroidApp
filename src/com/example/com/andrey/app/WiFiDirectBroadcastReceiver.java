@@ -40,6 +40,12 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
 		}
 	};
 		
+	public void clearLocalServices()
+	{
+		mManager.clearLocalServices(mChannel, new ActionListenerImpl("clearLocalServices"));
+
+	}
+	
     public WiFiDirectBroadcastReceiver(WifiP2pManager manager, Channel channel,MainActivity activity) {
         super();
         this.mManager = manager;
@@ -108,11 +114,17 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
 
 	public void APIP2PConnect(String PeerMacAddress){
 		WifiP2pDevice dev 				= this.getDeviceByMac( PeerMacAddress);
-    	this.config.deviceAddress 		= dev.deviceAddress;
-    	this.config.wps.setup 			= WpsInfo.PBC;
-    	this.config.groupOwnerIntent 	= 15;
-    	AppendToText("Connecting to " + dev.deviceAddress);
-    	mManager.connect(mChannel, this.config, new ActionListenerImpl("connect"));
+		if(dev != null){
+	    	this.config.deviceAddress 		= dev.deviceAddress;
+	    	this.config.wps.setup 			= WpsInfo.PBC;
+	    	
+	    	this.config.groupOwnerIntent 	= 0;
+	    	AppendToText("Connecting to " + dev.deviceAddress);
+	    	mManager.connect(mChannel, this.config, new ActionListenerImpl("connect"));
+		}
+		else{
+			AppendToText("Station not found");
+		}
 	}
 	
 	public Integer APIP2PgetDevicesCount(){
@@ -164,7 +176,7 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
         	this.ConnectionChangedAction(intent);	// Respond to new connection or disconnections
         } else if (WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION.equals(action))
         {
-        	AppendToText("WIFI_P2P_THIS_DEVICE_CHANGED_ACTION");
+        	//AppendToText("WIFI_P2P_THIS_DEVICE_CHANGED_ACTION");
             //DeviceListFragment fragment = (DeviceListFragment) mActivity.getFragmentManager()
             //        .findFragmentById(R.id.frag_list);
             //fragment.updateThisDevice((WifiP2pDevice) intent.getParcelableExtra(
@@ -177,7 +189,7 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
     private void RequestPeers( Intent intent){
         if (mManager != null) {
             mManager.requestPeers(mChannel, myPeerListListener);
-            AppendToText("WIFI_P2P_PEERS_CHANGED_ACTION");  
+            //AppendToText("WIFI_P2P_PEERS_CHANGED_ACTION");  
         }
     }
     
@@ -223,7 +235,7 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
 
     private void AppendToText(String string){
     	this.mActivity.txtGo.setText(getConnectionStatus());
-    	this.mActivity.text.append("\n" + string);
+    	mActivity.AppendToText(string);
     }
     
 }
