@@ -58,63 +58,11 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
     }
     
     /**
-     * Implementation of ConnectionInfoListener
-     * @author Andrey Shamis
-     */
-    private class ConnInfoList implements ConnectionInfoListener{
-		@Override
-		public void onConnectionInfoAvailable(final WifiP2pInfo info) {
-	        if (info.groupFormed && info.isGroupOwner) {
-	        	connectStatus	=	"GO";
-	        } else if (info.groupFormed) {
-	        	connectStatus	=	"Client";
-	        }
-	    }
-    }
-    
-    /**
-     * Get P2P Group Name/SSID
-     * @return String
-     */
-    public String getP2pGroupName(){
-    	return m_P2pSSID;
-    }
-    
-    private class GroupInfoL implements GroupInfoListener{
-		@Override
-		public void onGroupInfoAvailable(WifiP2pGroup group) {
-			m_P2PGroup = group;
-			if(m_P2PGroup != null){
-				m_P2PInterfaceName = m_P2PGroup.getInterface();
-				m_P2pSSID = m_P2PGroup.getNetworkName();
-			}
-		}
-    	
-    }
-    
-    /**
      * Get p2p interface name. Example p2p-p2p0-9
      * @return String p2p interface name
      */
     public String  API_GetP2PInterfaceName(){
     	return m_P2PInterfaceName;
-    }
-    
-    /**
-     * Implementation of ActionListener
-     * @author Andrey Shamis
-     */
-    private class ActionListenerImpl implements ActionListener{
-    	public ActionListenerImpl(String newActionType ){
-    	}
-
-		@Override
-		public void onFailure(int reason) {
-		}
-		
-		@Override
-		public void onSuccess() {
-		}
     }
     
     public String getConnectionStatus(){
@@ -234,14 +182,62 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
 		catch(Exception ex){}
 		return ret;
 	}
-
-    //private void PrintToText(String string){
-    //	this.mActivity.text.setText(string);
-    //}
-
-    //private void AppendToText(String string){
-    //	this.mActivity.txtGo.setText(getConnectionStatus());
-    //	mActivity.AppendToText(string);
-    //}
     
+    /**
+     * Get P2P Group Name/SSID
+     * @return String
+     */
+    public String getP2pGroupName(){
+    	return m_P2pSSID;
+    }
+    
+    //*****************************************************************//
+    //*****************************************************************//
+    //*****************************************************************//
+    /**
+     * Implementation of ConnectionInfoListener
+     * @author Andrey Shamis
+     */
+    private class ConnInfoList implements ConnectionInfoListener{
+		@Override
+		public void onConnectionInfoAvailable(final WifiP2pInfo info) {
+	        if (info.groupFormed && info.isGroupOwner) {
+	        	connectStatus	=	"GO";
+	        } else if (info.groupFormed) {
+	        	connectStatus	=	"Client";
+	        }
+	    }
+    }
+    //*****************************************************************//
+    private class GroupInfoL implements GroupInfoListener{
+		@Override
+		public void onGroupInfoAvailable(WifiP2pGroup group) {
+			m_P2PGroup = group;
+			if(m_P2PGroup != null){
+				m_P2PInterfaceName = m_P2PGroup.getInterface();
+				m_P2pSSID = m_P2PGroup.getNetworkName();
+			}
+		}
+    	
+    }
+    //*****************************************************************//
+    /**
+     * Implementation of ActionListener
+     * @author Andrey Shamis
+     */
+    private class ActionListenerImpl implements ActionListener{
+    	public ActionListenerImpl(String newActionType ){
+    	}
+
+		@Override
+		public void onFailure(int reason) {
+		}
+		
+		@Override
+		public void onSuccess() {
+		}
+    }
+    //*****************************************************************//
+    //*****************************************************************//
+    //*****************************************************************//
 }
