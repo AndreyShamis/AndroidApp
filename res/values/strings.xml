@@ -8,7 +8,7 @@
 	
 	<string name="p2p_connect">Get IP</string>
 	<string name="p2p_discover">Discover</string>
-	<string name="p2p_disconnect">Disconnect</string>
+	<string name="p2p_disconnect">Remove Group</string>
 	<string name="p2p_peers">Peers</string>
     <string-array name="p2p_methods">
         <item>PBC</item>

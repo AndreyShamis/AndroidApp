@@ -149,7 +149,7 @@ public class MainActivity extends Activity
         });  
         btnDisconnect.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-            	mReceiver.APIP2pRemoveGroup();
+            	mReceiver.API_P2pRemoveGroup();
             }
         });
         btnP2pConnect.setOnClickListener(new View.OnClickListener() {
@@ -162,7 +162,7 @@ public class MainActivity extends Activity
         
         btnP2pDiscover.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-            	mReceiver.APIP2PDiscoverPeers();
+            	mReceiver.API_P2pDiscoverPeers();
             }
         });
     }
@@ -211,7 +211,7 @@ public class MainActivity extends Activity
 	            handler.post(new Runnable() {
 	                public void run() {
 	                	txtGo.setText(mReceiver.getConnectionStatus());
-	                	txtDevicesCount.setText("Devices count: " + mReceiver.APIP2PgetDevicesCount());
+	                	txtDevicesCount.setText("Devices count: " + mReceiver.API_P2pGetDevicesCount());
 	                }
 	            });
 	        }
@@ -276,7 +276,7 @@ public class MainActivity extends Activity
 			Integer goIntent = Integer.parseInt(cmbP2pGoIntent.getItemAtPosition(cmbP2pGoIntent.getSelectedItemPosition()).toString());
 			Integer Wpsmethod = mReceiver.P2PMethodToInt(wpsMethodString);
 			AppendToText("Go Intent value = " + goIntent.toString() + " WpsMethod = " + wpsMethodString + "[" + Wpsmethod + "]");
-			mReceiver.APIP2PConnect((String) txt.getText(), Wpsmethod , goIntent);
+			mReceiver.API_P2pConnect((String) txt.getText(), Wpsmethod , goIntent);
 		}
 		
 	}
