@@ -6,8 +6,32 @@
     <string name="hello_world">#### Application started ####</string>
 	<string name="close_app">Exit</string>
 	
-	<string name="p2p_connect">Connect</string>
+	<string name="p2p_connect">Get IP</string>
 	<string name="p2p_discover">Discover</string>
 	<string name="p2p_disconnect">Disconnect</string>
 	<string name="p2p_peers">Peers</string>
+    <string-array name="p2p_methods">
+        <item>PBC</item>
+        <item>KEYPAD</item>
+        <item>LABEL</item>
+        <item>DISPLAY</item>
+    </string-array>
+    <string-array name="p2p_go_intents">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+        <item>9</item>
+        <item>10</item>
+        <item>11</item>
+        <item>12</item>
+        <item>13</item>
+        <item>14</item>
+        <item>15</item>
+    </string-array>	
 </resources>

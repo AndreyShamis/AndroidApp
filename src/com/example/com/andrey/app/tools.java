@@ -42,7 +42,32 @@ public class tools {
         } catch (Exception ex) { } // for now eat exceptions
         return "";
     }
-    
+    public static String getIPAddressByName(boolean useIPv4,String IntrfName) {
+        try {
+            List<NetworkInterface> interfaces = Collections.list(NetworkInterface.getNetworkInterfaces());
+            for (NetworkInterface intf : interfaces) {
+            	if(!intf.getDisplayName().equals(IntrfName))
+            		continue;
+                List<InetAddress> addrs = Collections.list(intf.getInetAddresses());
+                for (InetAddress addr : addrs) {
+                    if (!addr.isLoopbackAddress()) {
+                        String sAddr = addr.getHostAddress().toUpperCase();
+                        boolean isIPv4 = InetAddressUtils.isIPv4Address(sAddr); 
+                        if (useIPv4) {
+                            if (isIPv4) 
+                                return sAddr;
+                        } else {
+                            if (!isIPv4) {
+                                int delim = sAddr.indexOf('%'); // drop ip6 port suffix
+                                return delim<0 ? sAddr : sAddr.substring(0, delim);
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (Exception ex) { } // for now eat exceptions
+        return "";
+    }
     /**
      * Returns MAC address of the given interface name.
      * @param interfaceName eth0, wlan0 or NULL=use first interface 

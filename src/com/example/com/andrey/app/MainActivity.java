@@ -33,7 +33,9 @@ import android.util.TypedValue;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TableLayout;
 import android.widget.TableRow;
@@ -45,6 +47,7 @@ public class MainActivity extends Activity
     Button button ,btnDisconnect , btnP2pConnect,btnP2pDiscover, btnExit,
     	btnProcessList ,btnClear,btnPreintP2pDevices;
     public TextView text, txtGo, txtDevicesCount,txtDiscoverStatus;
+    Spinner cmbP2pMethods,cmbP2pGoIntent;
     TableLayout tblDevices;
     Coordinates coor ;
     WifiP2pManager mManager;
@@ -72,11 +75,28 @@ public class MainActivity extends Activity
 	    btnPreintP2pDevices = (Button)  findViewById(R.id.btnPreintP2pDevices);
 	    tblDevices 		= (TableLayout) findViewById(R.id.tblDevices);
 	    btnExit			= (Button)  findViewById(R.id.btnExit);
+	    cmbP2pMethods   = (Spinner) findViewById(R.id.cmbP2pMethods);
+	    cmbP2pGoIntent  = (Spinner) findViewById(R.id.cmbP2pGoIntent);
     }
     
     private void initGuiListeners()
     {
     	
+    	// Create an ArrayAdapter using the string array and a default spinner layout
+    	ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
+    	        R.array.p2p_methods, android.R.layout.simple_spinner_item);
+    	// Specify the layout to use when the list of choices appears
+    	adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+    	// Apply the adapter to the spinner
+    	cmbP2pMethods.setAdapter(adapter);
+    	
+    	// Create an ArrayAdapter using the string array and a default spinner layout
+    	ArrayAdapter<CharSequence> adapter2 = ArrayAdapter.createFromResource(this,
+    	        R.array.p2p_go_intents, android.R.layout.simple_spinner_item);
+    	// Specify the layout to use when the list of choices appears
+    	adapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+    	// Apply the adapter to the spinner
+    	cmbP2pGoIntent.setAdapter(adapter2);
     	
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -134,7 +154,9 @@ public class MainActivity extends Activity
         });
         btnP2pConnect.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-            		mReceiver.APIP2PConnect("0c:8b:fd:5f:13:89");// "CE:3A:61:B7:D7:B2");
+            	AppendToText("My P2P Interface Name is: " + mReceiver.API_GetP2PInterfaceName());
+            	AppendToText("My P2P IP Address is: " + tls.getIPAddressByName(true,mReceiver.API_GetP2PInterfaceName()));
+            	//	mReceiver.APIP2PConnect("0c:8b:fd:5f:13:89",cmbP2pMethods.get);// "CE:3A:61:B7:D7:B2");
             }
         });
         
@@ -248,7 +270,13 @@ public class MainActivity extends Activity
 		@Override
 		public void onClick(View v) {
 			TextView txt = (TextView)v;
-			mReceiver.APIP2PConnect((String) txt.getText());
+			WpsInfo info;
+		//	WpsInfo.DISPLAY
+			String wpsMethodString = cmbP2pMethods.getItemAtPosition(cmbP2pMethods.getSelectedItemPosition()).toString();
+			Integer goIntent = Integer.parseInt(cmbP2pGoIntent.getItemAtPosition(cmbP2pGoIntent.getSelectedItemPosition()).toString());
+			Integer Wpsmethod = mReceiver.P2PMethodToInt(wpsMethodString);
+			AppendToText("Go Intent value = " + goIntent.toString() + " WpsMethod = " + wpsMethodString + "[" + Wpsmethod + "]");
+			mReceiver.APIP2PConnect((String) txt.getText(), Wpsmethod , goIntent);
 		}
 		
 	}
