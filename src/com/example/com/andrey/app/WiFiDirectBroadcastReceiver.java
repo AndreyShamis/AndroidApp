@@ -105,11 +105,7 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
      * @author Andrey Shamis
      */
     private class ActionListenerImpl implements ActionListener{
-    	
-    	private String actionType = "";
-    	
     	public ActionListenerImpl(String newActionType ){
-    		this.actionType = newActionType;
     	}
 
 		@Override
