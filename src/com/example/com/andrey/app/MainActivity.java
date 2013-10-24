@@ -50,9 +50,11 @@ public class MainActivity extends Activity
     Spinner cmbP2pMethods,cmbP2pGoIntent;
     TableLayout tblDevices;
     Coordinates coor ;
+    
     WifiP2pManager mManager;
     Channel mChannel;
     WiFiDirectBroadcastReceiver mReceiver;
+    
     IntentFilter mIntentFilter;
     Boolean enableOrientationPrint = false;
     PeerListListener myPeerListListener;
@@ -100,8 +102,8 @@ public class MainActivity extends Activity
     	
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-            	//
-            	text.setText(tls.ReadCPUinfo());
+            	mReceiver.API_P2pCancelConnect();
+            	//text.setText(tls.ReadCPUinfo());
             }
         });
         btnExit.setOnClickListener(new View.OnClickListener() {
@@ -156,7 +158,6 @@ public class MainActivity extends Activity
             public void onClick(View v) {
             	AppendToText("My P2P Interface Name is: " + mReceiver.API_GetP2PInterfaceName());
             	AppendToText("My P2P IP Address is: " + tls.getIPAddressByName(true,mReceiver.API_GetP2PInterfaceName()));
-            	//	mReceiver.APIP2PConnect("0c:8b:fd:5f:13:89",cmbP2pMethods.get);// "CE:3A:61:B7:D7:B2");
             }
         });
         
@@ -179,7 +180,6 @@ public class MainActivity extends Activity
 				}
 			});
 		    mReceiver = new WiFiDirectBroadcastReceiver(mManager, mChannel, this);
-		    mReceiver.SetDeviceMacAddress("CE:3A:61:B7:D7:B2".toLowerCase());
 		    mIntentFilter = new IntentFilter();
 		    mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_STATE_CHANGED_ACTION);
 		    mIntentFilter.addAction(WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION);

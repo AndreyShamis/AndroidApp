@@ -1,9 +1,9 @@
 <TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/tableLayout1"
-    android:layout_width="fill_parent"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:shrinkColumns="*"  
+    android:shrinkColumns="*"
     android:stretchColumns="*"
     tools:context=".MainActivity" >
  
@@ -15,35 +15,49 @@
 	        android:baselineAligned="false"
 	        android:orientation="horizontal" >
 
-             <Button
-		        android:id="@+id/btnCpuInfo"
-		        android:layout_height="match_parent"
-		        android:minHeight="@dimen/activity_horizontal_margin"
-		        android:minWidth="@dimen/activity_horizontal_margin"
-		        android:text="CPU Info"
-		        android:textSize="12sp" />
-		    <Button
-		        android:id="@+id/btnShowProcessList"
-		        android:layout_height="match_parent"
-		        android:minHeight="@dimen/activity_horizontal_margin"
-		        android:minWidth="@dimen/activity_horizontal_margin"
-		        android:text="Process List"
-		        android:textSize="12sp" />
-		    <Button
-		        android:id="@+id/btnClear"
-		        android:layout_height="match_parent"
-		        android:minHeight="@dimen/activity_horizontal_margin"
-		        android:minWidth="@dimen/activity_horizontal_margin"
-		        android:text="Clear"
-		        android:textSize="12sp" />
-		    <Button
-		        android:id="@+id/btnExit"
-		        android:layout_height="match_parent"
-		        android:minHeight="@dimen/activity_horizontal_margin"
-		        android:minWidth="@dimen/activity_horizontal_margin"
-		        android:text="@string/close_app"
-		        android:textSize="12sp" />
-    </TableRow> 
+	        <Button
+	            android:id="@+id/btnCpuInfo"
+	            style="@dimen/activity_horizontal_margin"
+	            android:layout_width="match_parent"
+	            android:layout_height="match_parent"
+	            android:layout_weight="1"
+	            android:minHeight="@dimen/activity_horizontal_margin"
+	            android:minWidth="@dimen/activity_horizontal_margin"
+	            android:text="@string/cancel_connect"
+	            android:textSize="12sp"
+	            android:textStyle="normal" />
+
+	        <Button
+	            android:id="@+id/btnShowProcessList"
+	            style="@dimen/activity_horizontal_margin"
+	            android:layout_height="match_parent"
+	            android:layout_weight="1"
+	            android:minHeight="@dimen/activity_horizontal_margin"
+	            android:minWidth="@dimen/activity_horizontal_margin"
+	            android:text="Process List"
+	            android:textSize="12sp" />
+
+	        <Button
+	            android:id="@+id/btnClear"
+	            style="@dimen/activity_horizontal_margin"
+	            android:layout_height="match_parent"
+	            android:layout_weight="1"
+	            android:minHeight="@dimen/activity_horizontal_margin"
+	            android:minWidth="@dimen/activity_horizontal_margin"
+	            android:text="@string/clear_logs"
+	            android:textSize="12sp" />
+
+	        <Button
+	            android:id="@+id/btnExit"
+	            style="@dimen/activity_horizontal_margin"
+	            android:layout_height="match_parent"
+	            android:layout_weight="1"
+	            android:minHeight="@dimen/activity_horizontal_margin"
+	            android:minWidth="@dimen/activity_horizontal_margin"
+	            android:text="@string/close_app"
+	            android:textSize="12sp" />
+	    </TableRow>
+ 
     <TableRow
         android:id="@+id/tblP2P"
         android:layout_width="match_parent"
@@ -77,12 +91,14 @@
 		        android:minWidth="@dimen/activity_horizontal_margin"
 		        android:text="@string/p2p_connect"
 		        android:textSize="12sp" />
+
 		    <Button
 		        android:id="@+id/P2PDiscover"
 		        android:minHeight="@dimen/activity_horizontal_margin"
 		        android:minWidth="@dimen/activity_horizontal_margin"
 		        android:text="@string/p2p_discover"
 		        android:textSize="12sp" />
+
 		    <Button
 		        android:id="@+id/btnDisconnect"
 		        android:minHeight="@dimen/activity_horizontal_margin"

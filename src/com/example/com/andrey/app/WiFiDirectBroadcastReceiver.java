@@ -54,7 +54,15 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
         super();
         this.mManager = manager;
         this.mChannel = channel;
-        this.mActivity = activity;        
+        this.mActivity = activity;
+    }
+    
+    public void API_P2pStopPeersDiscovery(){
+    	mManager.stopPeerDiscovery(mChannel, new ActionListenerImpl("stopPeerDiscovery"));
+    }
+    
+    public void API_P2pCancelConnect(){
+    	mManager.cancelConnect(mChannel, new ActionListenerImpl("cancelConnect"));
     }
     
     /**
@@ -67,10 +75,6 @@ public class WiFiDirectBroadcastReceiver extends BroadcastReceiver {
     
     public String getConnectionStatus(){
     	return connectStatus;
-    }
-    
-	public void SetDeviceMacAddress(String mac){
-    	config.deviceAddress = mac;
     }
 
 	public void API_P2pConnect(String PeerMacAddress,Integer wpsMethod,Integer goIntent){
